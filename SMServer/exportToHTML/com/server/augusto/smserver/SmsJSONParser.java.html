@@ -1,0 +1,148 @@
+<html>
+<head>
+<title>SmsJSONParser.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(106,135,89); }
+.s3 { color: rgb(128,128,128); }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+SmsJSONParser.java</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<a name="l1"><span class="ln">1    </span></a><span class="s0">package </span><span class="s1">com.server.augusto.smserver</span><span class="s0">;</span><span class="s1"> 
+<a name="l2"><span class="ln">2    </span></a> 
+<a name="l3"><span class="ln">3    </span></a></span><span class="s0">import </span><span class="s1">android.content.Context</span><span class="s0">;</span><span class="s1"> 
+<a name="l4"><span class="ln">4    </span></a></span><span class="s0">import </span><span class="s1">android.util.Log</span><span class="s0">;</span><span class="s1"> 
+<a name="l5"><span class="ln">5    </span></a> 
+<a name="l6"><span class="ln">6    </span></a></span><span class="s0">import </span><span class="s1">org.apache.http.HttpEntity</span><span class="s0">;</span><span class="s1"> 
+<a name="l7"><span class="ln">7    </span></a></span><span class="s0">import </span><span class="s1">org.apache.http.HttpResponse</span><span class="s0">;</span><span class="s1"> 
+<a name="l8"><span class="ln">8    </span></a></span><span class="s0">import </span><span class="s1">org.apache.http.NameValuePair</span><span class="s0">;</span><span class="s1"> 
+<a name="l9"><span class="ln">9    </span></a></span><span class="s0">import </span><span class="s1">org.apache.http.client.ClientProtocolException</span><span class="s0">;</span><span class="s1"> 
+<a name="l10"><span class="ln">10   </span></a></span><span class="s0">import </span><span class="s1">org.apache.http.client.entity.UrlEncodedFormEntity</span><span class="s0">;</span><span class="s1"> 
+<a name="l11"><span class="ln">11   </span></a></span><span class="s0">import </span><span class="s1">org.apache.http.client.methods.HttpGet</span><span class="s0">;</span><span class="s1"> 
+<a name="l12"><span class="ln">12   </span></a></span><span class="s0">import </span><span class="s1">org.apache.http.client.methods.HttpPost</span><span class="s0">;</span><span class="s1"> 
+<a name="l13"><span class="ln">13   </span></a></span><span class="s0">import </span><span class="s1">org.apache.http.client.utils.URLEncodedUtils</span><span class="s0">;</span><span class="s1"> 
+<a name="l14"><span class="ln">14   </span></a></span><span class="s0">import </span><span class="s1">org.apache.http.impl.client.DefaultHttpClient</span><span class="s0">;</span><span class="s1"> 
+<a name="l15"><span class="ln">15   </span></a></span><span class="s0">import </span><span class="s1">org.apache.http.message.BasicNameValuePair</span><span class="s0">;</span><span class="s1"> 
+<a name="l16"><span class="ln">16   </span></a></span><span class="s0">import </span><span class="s1">org.json.JSONException</span><span class="s0">;</span><span class="s1"> 
+<a name="l17"><span class="ln">17   </span></a></span><span class="s0">import </span><span class="s1">org.json.JSONObject</span><span class="s0">;</span><span class="s1"> 
+<a name="l18"><span class="ln">18   </span></a> 
+<a name="l19"><span class="ln">19   </span></a></span><span class="s0">import </span><span class="s1">java.io.BufferedReader</span><span class="s0">;</span><span class="s1"> 
+<a name="l20"><span class="ln">20   </span></a></span><span class="s0">import </span><span class="s1">java.io.IOException</span><span class="s0">;</span><span class="s1"> 
+<a name="l21"><span class="ln">21   </span></a></span><span class="s0">import </span><span class="s1">java.io.InputStream</span><span class="s0">;</span><span class="s1"> 
+<a name="l22"><span class="ln">22   </span></a></span><span class="s0">import </span><span class="s1">java.io.InputStreamReader</span><span class="s0">;</span><span class="s1"> 
+<a name="l23"><span class="ln">23   </span></a></span><span class="s0">import </span><span class="s1">java.io.UnsupportedEncodingException</span><span class="s0">;</span><span class="s1"> 
+<a name="l24"><span class="ln">24   </span></a></span><span class="s0">import </span><span class="s1">java.util.ArrayList</span><span class="s0">;</span><span class="s1"> 
+<a name="l25"><span class="ln">25   </span></a></span><span class="s0">import </span><span class="s1">java.util.List</span><span class="s0">;</span><span class="s1"> 
+<a name="l26"><span class="ln">26   </span></a> 
+<a name="l27"><span class="ln">27   </span></a></span><span class="s0">public class </span><span class="s1">SmsJSONParser { 
+<a name="l28"><span class="ln">28   </span></a> 
+<a name="l29"><span class="ln">29   </span></a>    InputStream is = </span><span class="s0">null;</span><span class="s1"> 
+<a name="l30"><span class="ln">30   </span></a>    JSONObject jObj = </span><span class="s0">null;</span><span class="s1"> 
+<a name="l31"><span class="ln">31   </span></a>    String json = </span><span class="s2">&quot;&quot;</span><span class="s0">;</span><span class="s1"> 
+<a name="l32"><span class="ln">32   </span></a>    String url</span><span class="s0">;</span><span class="s1"> 
+<a name="l33"><span class="ln">33   </span></a>    String method</span><span class="s0">;</span><span class="s1"> 
+<a name="l34"><span class="ln">34   </span></a>    List&lt;NameValuePair&gt; params = </span><span class="s0">new </span><span class="s1">ArrayList&lt;&gt;()</span><span class="s0">;</span><span class="s1"> 
+<a name="l35"><span class="ln">35   </span></a>    DatabaseHelper db</span><span class="s0">;</span><span class="s1"> 
+<a name="l36"><span class="ln">36   </span></a> 
+<a name="l37"><span class="ln">37   </span></a>    </span><span class="s3">// constructor</span><span class="s1"> 
+<a name="l38"><span class="ln">38   </span></a>    </span><span class="s0">public </span><span class="s1">SmsJSONParser() { 
+<a name="l39"><span class="ln">39   </span></a> 
+<a name="l40"><span class="ln">40   </span></a>    } 
+<a name="l41"><span class="ln">41   </span></a> 
+<a name="l42"><span class="ln">42   </span></a>    </span><span class="s0">public </span><span class="s1">JSONObject makeHttpRequestFromSms(String sender</span><span class="s0">, </span><span class="s1">String msj</span><span class="s0">,</span><span class="s1">Context context) { 
+<a name="l43"><span class="ln">43   </span></a>        db = </span><span class="s0">new </span><span class="s1">DatabaseHelper(context)</span><span class="s0">;</span><span class="s1"> 
+<a name="l44"><span class="ln">44   </span></a>        </span><span class="s0">if</span><span class="s1">(db.validateUserbyPhone(sender)){ 
+<a name="l45"><span class="ln">45   </span></a>            String[] parts = msj.split(</span><span class="s2">&quot;;&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+<a name="l46"><span class="ln">46   </span></a>            url = parts[</span><span class="s4">0</span><span class="s1">]</span><span class="s0">;</span><span class="s1"> 
+<a name="l47"><span class="ln">47   </span></a>            method = parts[</span><span class="s4">1</span><span class="s1">]</span><span class="s0">;</span><span class="s1"> 
+<a name="l48"><span class="ln">48   </span></a> 
+<a name="l49"><span class="ln">49   </span></a>            </span><span class="s0">if</span><span class="s1">(parts.length &gt; </span><span class="s4">2</span><span class="s1">){ 
+<a name="l50"><span class="ln">50   </span></a>                String[] paramsStrings = parts[</span><span class="s4">2</span><span class="s1">].split(</span><span class="s2">&quot;,&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+<a name="l51"><span class="ln">51   </span></a>                </span><span class="s0">for </span><span class="s1">(String paramsString : paramsStrings) { 
+<a name="l52"><span class="ln">52   </span></a>                    </span><span class="s0">if </span><span class="s1">(!paramsString.equals(</span><span class="s2">&quot;&quot;</span><span class="s1">)) { 
+<a name="l53"><span class="ln">53   </span></a>                        String[] nameValuePair = paramsString.split(</span><span class="s2">&quot;:&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+<a name="l54"><span class="ln">54   </span></a>                        String name = nameValuePair[</span><span class="s4">0</span><span class="s1">]</span><span class="s0">;</span><span class="s1"> 
+<a name="l55"><span class="ln">55   </span></a>                        String value = nameValuePair[</span><span class="s4">1</span><span class="s1">]</span><span class="s0">;</span><span class="s1"> 
+<a name="l56"><span class="ln">56   </span></a>                        params.add(</span><span class="s0">new </span><span class="s1">BasicNameValuePair(name</span><span class="s0">, </span><span class="s1">value))</span><span class="s0">;</span><span class="s1"> 
+<a name="l57"><span class="ln">57   </span></a>                    } 
+<a name="l58"><span class="ln">58   </span></a>                } 
+<a name="l59"><span class="ln">59   </span></a>            } 
+<a name="l60"><span class="ln">60   </span></a>            Log.d(</span><span class="s2">&quot;SmsJSONParser&quot;</span><span class="s0">, </span><span class="s1">url)</span><span class="s0">;</span><span class="s1"> 
+<a name="l61"><span class="ln">61   </span></a>            Log.d(</span><span class="s2">&quot;SmsJSONParser&quot;</span><span class="s0">, </span><span class="s1">method)</span><span class="s0">;</span><span class="s1"> 
+<a name="l62"><span class="ln">62   </span></a>            </span><span class="s0">try </span><span class="s1">{ 
+<a name="l63"><span class="ln">63   </span></a>                </span><span class="s0">if</span><span class="s1">(method.equals(</span><span class="s2">&quot;POST&quot;</span><span class="s1">)){ 
+<a name="l64"><span class="ln">64   </span></a>                    Log.d(</span><span class="s2">&quot;SmsJSONParser&quot;</span><span class="s0">, </span><span class="s2">&quot;POST&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+<a name="l65"><span class="ln">65   </span></a>                    DefaultHttpClient httpClient = </span><span class="s0">new </span><span class="s1">DefaultHttpClient()</span><span class="s0">;</span><span class="s1"> 
+<a name="l66"><span class="ln">66   </span></a>                    HttpPost httpPost = </span><span class="s0">new </span><span class="s1">HttpPost(url)</span><span class="s0">;</span><span class="s1"> 
+<a name="l67"><span class="ln">67   </span></a>                    httpPost.setEntity(</span><span class="s0">new </span><span class="s1">UrlEncodedFormEntity(params))</span><span class="s0">;</span><span class="s1"> 
+<a name="l68"><span class="ln">68   </span></a> 
+<a name="l69"><span class="ln">69   </span></a>                    HttpResponse httpResponse = httpClient.execute(httpPost)</span><span class="s0">;</span><span class="s1"> 
+<a name="l70"><span class="ln">70   </span></a>                    HttpEntity httpEntity = httpResponse.getEntity()</span><span class="s0">;</span><span class="s1"> 
+<a name="l71"><span class="ln">71   </span></a>                    is = httpEntity.getContent()</span><span class="s0">;</span><span class="s1"> 
+<a name="l72"><span class="ln">72   </span></a> 
+<a name="l73"><span class="ln">73   </span></a>                }</span><span class="s0">else if</span><span class="s1">(method.equals(</span><span class="s2">&quot;GET&quot;</span><span class="s1">)){ 
+<a name="l74"><span class="ln">74   </span></a>                    Log.d(</span><span class="s2">&quot;SmsJSONParser&quot;</span><span class="s0">, </span><span class="s2">&quot;GET&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+<a name="l75"><span class="ln">75   </span></a>                    DefaultHttpClient httpClient = </span><span class="s0">new </span><span class="s1">DefaultHttpClient()</span><span class="s0">;</span><span class="s1"> 
+<a name="l76"><span class="ln">76   </span></a>                    String paramString = URLEncodedUtils.format(params</span><span class="s0">, </span><span class="s2">&quot;utf-8&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+<a name="l77"><span class="ln">77   </span></a>                    url += </span><span class="s2">&quot;?&quot; </span><span class="s1">+ paramString</span><span class="s0">;</span><span class="s1"> 
+<a name="l78"><span class="ln">78   </span></a>                    HttpGet httpGet = </span><span class="s0">new </span><span class="s1">HttpGet(url)</span><span class="s0">;</span><span class="s1"> 
+<a name="l79"><span class="ln">79   </span></a> 
+<a name="l80"><span class="ln">80   </span></a>                    HttpResponse httpResponse = httpClient.execute(httpGet)</span><span class="s0">;</span><span class="s1"> 
+<a name="l81"><span class="ln">81   </span></a>                    HttpEntity httpEntity = httpResponse.getEntity()</span><span class="s0">;</span><span class="s1"> 
+<a name="l82"><span class="ln">82   </span></a>                    is = httpEntity.getContent()</span><span class="s0">;</span><span class="s1"> 
+<a name="l83"><span class="ln">83   </span></a>                } 
+<a name="l84"><span class="ln">84   </span></a> 
+<a name="l85"><span class="ln">85   </span></a>            } </span><span class="s0">catch </span><span class="s1">(UnsupportedEncodingException | ClientProtocolException e) { 
+<a name="l86"><span class="ln">86   </span></a>                Log.d(</span><span class="s2">&quot;SmsJSONParser&quot;</span><span class="s0">, </span><span class="s2">&quot;UnsupportedEncodingException ClientProtocolException&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+<a name="l87"><span class="ln">87   </span></a>                e.printStackTrace()</span><span class="s0">;</span><span class="s1"> 
+<a name="l88"><span class="ln">88   </span></a>            } </span><span class="s0">catch </span><span class="s1">(IOException e) { 
+<a name="l89"><span class="ln">89   </span></a>                Log.d(</span><span class="s2">&quot;SmsJSONParser&quot;</span><span class="s0">, </span><span class="s2">&quot;IOException&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+<a name="l90"><span class="ln">90   </span></a>                e.printStackTrace()</span><span class="s0">;</span><span class="s1"> 
+<a name="l91"><span class="ln">91   </span></a>            } 
+<a name="l92"><span class="ln">92   </span></a> 
+<a name="l93"><span class="ln">93   </span></a>            </span><span class="s0">try </span><span class="s1">{ 
+<a name="l94"><span class="ln">94   </span></a>                BufferedReader reader = </span><span class="s0">new </span><span class="s1">BufferedReader(</span><span class="s0">new </span><span class="s1">InputStreamReader( 
+<a name="l95"><span class="ln">95   </span></a>                        is</span><span class="s0">, </span><span class="s2">&quot;iso-8859-1&quot;</span><span class="s1">)</span><span class="s0">, </span><span class="s4">8</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+<a name="l96"><span class="ln">96   </span></a>                StringBuilder sb = </span><span class="s0">new </span><span class="s1">StringBuilder()</span><span class="s0">;</span><span class="s1"> 
+<a name="l97"><span class="ln">97   </span></a>                String line</span><span class="s0">;</span><span class="s1"> 
+<a name="l98"><span class="ln">98   </span></a>                </span><span class="s0">while </span><span class="s1">((line = reader.readLine()) != </span><span class="s0">null</span><span class="s1">) { 
+<a name="l99"><span class="ln">99   </span></a>                    sb.append(line).append(</span><span class="s2">&quot;</span><span class="s0">\n</span><span class="s2">&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+<a name="l100"><span class="ln">100  </span></a>                } 
+<a name="l101"><span class="ln">101  </span></a>                is.close()</span><span class="s0">;</span><span class="s1"> 
+<a name="l102"><span class="ln">102  </span></a>                json = sb.toString()</span><span class="s0">;</span><span class="s1"> 
+<a name="l103"><span class="ln">103  </span></a>            } </span><span class="s0">catch </span><span class="s1">(Exception e) { 
+<a name="l104"><span class="ln">104  </span></a>                Log.e(</span><span class="s2">&quot;Buffer Error&quot;</span><span class="s0">, </span><span class="s2">&quot;Error converting result &quot; </span><span class="s1">+ e.toString())</span><span class="s0">;</span><span class="s1"> 
+<a name="l105"><span class="ln">105  </span></a>            } 
+<a name="l106"><span class="ln">106  </span></a> 
+<a name="l107"><span class="ln">107  </span></a>            </span><span class="s0">try </span><span class="s1">{ 
+<a name="l108"><span class="ln">108  </span></a>                jObj = </span><span class="s0">new </span><span class="s1">JSONObject(json)</span><span class="s0">;</span><span class="s1"> 
+<a name="l109"><span class="ln">109  </span></a>            } </span><span class="s0">catch </span><span class="s1">(JSONException e) { 
+<a name="l110"><span class="ln">110  </span></a>                Log.e(</span><span class="s2">&quot;JSON Parser&quot;</span><span class="s0">, </span><span class="s2">&quot;Error parsing data &quot; </span><span class="s1">+ e.toString())</span><span class="s0">;</span><span class="s1"> 
+<a name="l111"><span class="ln">111  </span></a>            } 
+<a name="l112"><span class="ln">112  </span></a>            db.closeDB()</span><span class="s0">;</span><span class="s1"> 
+<a name="l113"><span class="ln">113  </span></a>            </span><span class="s0">return </span><span class="s1">jObj</span><span class="s0">;</span><span class="s1"> 
+<a name="l114"><span class="ln">114  </span></a>        }</span><span class="s0">else </span><span class="s1">{ 
+<a name="l115"><span class="ln">115  </span></a>            Log.e(</span><span class="s2">&quot;Usario invalido&quot;</span><span class="s0">, </span><span class="s1">sender + </span><span class="s2">&quot; No puede consultar la BD&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+<a name="l116"><span class="ln">116  </span></a>            </span><span class="s0">try </span><span class="s1">{ 
+<a name="l117"><span class="ln">117  </span></a>                jObj = </span><span class="s0">new </span><span class="s1">JSONObject(</span><span class="s2">&quot;{</span><span class="s0">\&quot;</span><span class="s2">success</span><span class="s0">\&quot;</span><span class="s2">:0,</span><span class="s0">\&quot;</span><span class="s2">message</span><span class="s0">\&quot;</span><span class="s2">: </span><span class="s0">\&quot;</span><span class="s2">Connection Error</span><span class="s0">\&quot;</span><span class="s2">}&quot;</span><span class="s1">)</span><span class="s0">;</span><span class="s1"> 
+<a name="l118"><span class="ln">118  </span></a>            } </span><span class="s0">catch </span><span class="s1">(JSONException e) { 
+<a name="l119"><span class="ln">119  </span></a>                Log.e(</span><span class="s2">&quot;JSON Parser&quot;</span><span class="s0">, </span><span class="s2">&quot;Error parsing data &quot; </span><span class="s1">+ e.toString())</span><span class="s0">;</span><span class="s1"> 
+<a name="l120"><span class="ln">120  </span></a>            } 
+<a name="l121"><span class="ln">121  </span></a>            db.closeDB()</span><span class="s0">;</span><span class="s1"> 
+<a name="l122"><span class="ln">122  </span></a>            </span><span class="s0">return </span><span class="s1">jObj</span><span class="s0">;</span><span class="s1"> 
+<a name="l123"><span class="ln">123  </span></a>        } 
+<a name="l124"><span class="ln">124  </span></a>    } 
+<a name="l125"><span class="ln">125  </span></a>}</span></pre>
+</body>
+</html>

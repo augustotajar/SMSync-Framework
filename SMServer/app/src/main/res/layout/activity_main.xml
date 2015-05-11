@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <!--  Button to server configurations -->
+    <Button android:id="@+id/ConfigurarServidor"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Configurar servidor"
+        android:layout_marginTop="25dip"/>
+
+    <!--  Button to view all users -->
+    <Button android:id="@+id/TodosLosUsuarios_boton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Ver Usuarios"
+        android:layout_marginTop="25dip"/>
+
+    <!--  Button to create a new user-->
+    <Button android:id="@+id/NuevoUsuario_boton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Agregar Nuevo Usuario"
+        android:layout_marginTop="25dip"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Configurar el dispositivo para conectar al servidor web local"
+        android:id="@+id/ayuda"
+        android:editable="false"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dip"
+        android:layout_marginLeft="30dip"
+        android:layout_marginRight="30dip" />
+
+</LinearLayout>
